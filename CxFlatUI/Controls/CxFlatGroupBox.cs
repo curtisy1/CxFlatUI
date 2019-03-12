@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using CxFlatUI.Controls;
+using CxFlatUI.CustomTypes;
+using CxFlatUI.Interfaces;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -18,6 +21,10 @@ namespace CxFlatUI
         [RefreshProperties(RefreshProperties.Repaint)]
         public bool ShowText { get; set; } = false;
 
+        [Description("移动硬盘驱动器")]
+        [RefreshProperties(RefreshProperties.Repaint)]
+        public IHeaderStyle HeaderStyle { get; set; } = new HeaderStyle(new CustomDrawLine(new Pen(ThemeColors.OneLevelBorder, 1), 0, 38, 0, 38), new CustomRectangleF(15, 0, 0, 38), new Font("微软雅黑", 12F), new SolidBrush(ThemeColors.MainText), StringAlign.TopCenter);
+
         #endregion
 
         protected override void OnPaint(PaintEventArgs e)
@@ -35,8 +42,8 @@ namespace CxFlatUI
 
             if (ShowText)
             {
-                graphics.DrawLine(new Pen(ThemeColors.OneLevelBorder, 1), 0, 38, Width, 38);
-                graphics.DrawString(Text, new Font("微软雅黑", 12F), new SolidBrush(ThemeColors.MainText), new RectangleF(15, 0, Width - 50, 38), StringAlign.Left);
+                graphics.DrawLine(HeaderStyle.DrawLine.Pen, HeaderStyle.DrawLine.X1, HeaderStyle.DrawLine.Y1, Width, HeaderStyle.DrawLine.Y2);
+                graphics.DrawString(Text, HeaderStyle.HeaderFont, HeaderStyle.HeaderColor, new RectangleF(HeaderStyle.HeaderSize.X, HeaderStyle.HeaderSize.Y, Width - 50, HeaderStyle.HeaderSize.Height), HeaderStyle.HeaderAlignment);
             }
         }
 
@@ -45,6 +52,13 @@ namespace CxFlatUI
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
             DoubleBuffered = true;
             Font = new Font("Segoe UI", 12);
+        }
+
+        public CxFlatGroupBox(Font font)
+        {
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
+            DoubleBuffered = true;
+            Font = font;
         }
     }
 }
